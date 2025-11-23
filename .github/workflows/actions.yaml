@@ -24,7 +24,7 @@ jobs:
 
       - name: Run container and execute SQL
         run: |
-          docker rm -f oracle-extraction-container -ErrorAction SilentlyContinue
+          docker rm -f oracle-extraction-container
           docker run --name oracle-extraction-container --network host oracle-extraction
 
       - name: Copy text from container
