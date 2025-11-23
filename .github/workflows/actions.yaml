@@ -20,13 +20,13 @@ jobs:
         
 
       - name: Build Docker image
-        run: docker build -f Dockerfile.worker --progress=plain -t oracle-sql-runner .
+        run: docker build -f Dockerfile.worker --progress=plain -t oracle-extraction .
 
       - name: Run container and execute SQL
         run: |
-          docker run --name oracle-runner --network host oracle-sql-runner
+          docker run --name oracle-extraction-container --network host oracle-extraction
 
-      - name: Copy output.txt from container
+      - name: Copy text from container
         run: |
           docker cp oracle-runner:/app/ts_usage.csv ${{ github.workspace }}/ts_usage.csv
 
