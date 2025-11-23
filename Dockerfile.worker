@@ -1,7 +1,5 @@
 FROM container-registry.oracle.com/database/instantclient:latest
 
-RUN echo "192.168.0.107 sidb sidb.localdomain" >> /etc/hosts
-
 WORKDIR /app
 COPY . /app
 
@@ -14,4 +12,3 @@ ENV ORACLE_HOME=/usr/lib/oracle/12.2/client64
 ENV PATH=$PATH:$ORACLE_HOME
 
 CMD ["bash", "-c", "echo 'Running run_query.sh...' && bash run_query.sh && cat output.txt"]
-

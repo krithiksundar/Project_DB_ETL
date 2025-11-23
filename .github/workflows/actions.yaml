@@ -28,12 +28,12 @@ jobs:
 
       - name: Copy output.txt from container
         run: |
-          docker cp oracle-runner:/app/output.txt ${{ github.workspace }}/output.txt
+          docker cp oracle-runner:/app/ts_usage.csv ${{ github.workspace }}/ts_usage.csv
 
       - name: Commit output to repo
         run: |
             git config user.name "github-actions"
             git config user.email "actions@github.com"
-            git add output.txt
+            git add ts_usage.csv
             git commit -m "Automated SQL output update"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/krithiksundar/SQLConnection.git HEAD:main
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/krithiksundar/Project_DB_ETL.git HEAD:main

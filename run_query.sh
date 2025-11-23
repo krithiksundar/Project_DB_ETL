@@ -5,33 +5,20 @@ set -x
 # First, load environment variables
 source tnsdetails.env
 
-# Now you can safely reference them
-echo "DB_USER=$DB_USER"
-echo "DB_TNS=$DB_TNS"
-echo "DB_PASS=${DB_PASS:0:4}****"
+CONN_STR="$DB_USER/$DB_PASS@//$DB_HOST:$DB_PORT/$DB_SERVICE"
 
-echo "Connecting to Oracle and executing query..."
+echo "192.168.0.107 sidb sidb.localdomain" >> /etc/hosts
+
 > output.txt
+echo > /dev/tcp/192.168.0.107/1521 && echo "Port open" || echo "Port closed"
 
-# Run sqlplus and capture errors
-if ! sqlplus "$DB_USER/$DB_PASS@$DB_TNS" <<EOF >> output.txt 2>&1
-SET HEADING OFF
-SET FEEDBACK OFF
-SET PAGESIZE 0
-@query.sql
-EXIT
+echo "Testing Oracle DB connection..."
+echo "--------------------------------"
+
+timeout 240 sqlplus "$CONN_STR" <<EOF >> output.txt 2>&1
+SELECT name from v\$database;
+EXIT;
 EOF
-then
-    echo "ERROR: SQL*Plus failed to connect or execute the query!"
-    echo "----- SQL Output Start -----"
-    cat output.txt
-    echo "----- SQL Output End -----"
-    exit 1
-fi
 
-# Print results if successful
-echo "----- SQL Output Start -----"
-cat output.txt
-echo "----- SQL Output End -----"
-echo "Query executed successfully. Results saved to output.txt"
-
+echo "--------------------------------"
+echo "Done"
