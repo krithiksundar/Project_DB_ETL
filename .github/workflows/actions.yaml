@@ -28,7 +28,7 @@ jobs:
 
       - name: Copy text from container
         run: |
-          docker cp oracle-runner:/app/ts_usage.csv ${{ github.workspace }}/ts_usage.csv
+          docker cp oracle-extraction-container:/app/ts_usage.csv ${{ github.workspace }}/ts_usage.csv
 
       - name: Commit output to repo
         run: |

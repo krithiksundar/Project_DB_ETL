@@ -16,7 +16,7 @@ echo "Testing Oracle DB connection..."
 echo "--------------------------------"
 
 timeout 240 sqlplus "$CONN_STR" <<EOF >> output.txt 2>&1
-SELECT name from v\$database;
+@query.sql
 EXIT;
 EOF
 
