@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ts-streamlit-new
+  name: ts-streamlit-new1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ts-streamlit-new
+      app: ts-streamlit-new1
   template:
     metadata:
       labels:
-        app: ts-streamlit-new
+        app: ts-streamlit-new1
     spec:
       containers:
-      - name: ts-streamlit-new
-        image: krithiksundar/ts-streamlit:latest2
+      - name: ts-streamlit-new1
+        image: krithiksundar/ts-streamlit:latest3
         ports:
         - containerPort: 8501
