@@ -7,17 +7,19 @@ st.set_page_config(page_title="Tablespace Usage Dashboard", layout="wide")
 
 st.title("📊 Oracle Tablespace Usage Dashboard")
 
-# Force-bypass GitHub CDN cache using timestamp
+# Always fetch the latest CSV (cache-bypass using timestamp)
 CSV_URL = f"https://raw.githubusercontent.com/krithiksundar/Project_DB_ETL/main/ts_usage.csv?t={int(time.time())}"
 
-# Load always-fresh CSV
+st.info("Fetching latest CSV directly from GitHub...")
+
 try:
+    # Load always-fresh CSV
     df = pd.read_csv(CSV_URL)
 
     st.subheader("📄 Raw Data (Live from GitHub)")
     st.dataframe(df, use_container_width=True)
 
-    # Validate required columns
+    # Required columns
     required_cols = {"TABLESPACE_NAME", "USED_MB"}
 
     if not required_cols.issubset(df.columns):
@@ -34,4 +36,4 @@ try:
         st.plotly_chart(fig, use_container_width=True)
 
 except Exception as e:
-    st.error(f"Error loading CSV from GitHub: {e}")
+    st.error(f"❌ Unable to load CSV from GitHub.\n\nError: {e}")
