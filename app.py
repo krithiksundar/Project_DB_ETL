@@ -13,19 +13,26 @@ CSV_URL = f"https://raw.githubusercontent.com/krithiksundar/Project_DB_ETL/main/
 st.info("Fetching latest CSV directly from GitHub...")
 
 try:
-    # Load always-fresh CSV
-    df = pd.read_csv(CSV_URL)
+    # Try loading CSV (auto-detect delimiter)
+    df = pd.read_csv(CSV_URL, sep=None, engine="python")
+
+    # Convert numeric columns safely
+    numeric_cols = ["USED_MB", "FREE_MB", "TOTAL_MB"]
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
 
     st.subheader("📄 Raw Data (Live from GitHub)")
     st.dataframe(df, use_container_width=True)
 
-    # Required columns
+    # Validate required columns
     required_cols = {"TABLESPACE_NAME", "USED_MB"}
-
     if not required_cols.issubset(df.columns):
-        st.error(f"CSV must contain columns: {', '.join(required_cols)}")
+        st.error(f"CSV must contain: {', '.join(required_cols)}")
+
     else:
         st.subheader("🥧 Tablespace Used Space Pie Chart")
+
         fig = px.pie(
             df,
             names="TABLESPACE_NAME",
