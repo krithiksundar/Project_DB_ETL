@@ -1,9 +1,11 @@
-SET HEADING ON
 SET FEEDBACK OFF
-SET PAGESIZE 50000
-SET LINESIZE 300
+SET HEADING ON
+SET PAGESIZE 0
+SET LINESIZE 1000
+SET UNDERLINE OFF
 SET TERMOUT OFF
 SET COLSEP ','
+
 SPOOL ts_usage.csv
 
 SELECT
@@ -13,21 +15,18 @@ SELECT
     ROUND(df.total_mb, 2) AS total_mb
 FROM
     (
-        SELECT
-            tablespace_name,
-            SUM(bytes)/1024/1024 AS total_mb
+        SELECT tablespace_name, SUM(bytes)/1024/1024 AS total_mb
         FROM dba_data_files
         GROUP BY tablespace_name
     ) df
 LEFT JOIN
     (
-        SELECT
-            tablespace_name,
-            SUM(bytes)/1024/1024 AS free_mb
+        SELECT tablespace_name, SUM(bytes)/1024/1024 AS free_mb
         FROM dba_free_space
         GROUP BY tablespace_name
     ) fs
 ON df.tablespace_name = fs.tablespace_name
 ORDER BY df.tablespace_name;
 
-SPOOL OFF;
+SPOOL OFF
+/

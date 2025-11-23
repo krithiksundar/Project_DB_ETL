@@ -7,7 +7,8 @@ st.set_page_config(page_title="Tablespace Usage Dashboard", layout="wide")
 
 st.title("📊 Oracle Tablespace Usage Dashboard")
 
-CSV_FILE = "ts_usage.csv"   # CSV file expected in same folder
+CSV_URL = "https://raw.githubusercontent.com/krithiksundar/Project_DB_ETL/main/ts_usage.csv"
+df = pd.read_csv(CSV_URL)
 
 # Check if file exists
 if not os.path.exists(CSV_FILE):
