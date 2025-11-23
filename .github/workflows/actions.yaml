@@ -1,0 +1,39 @@
+name: Run Oracle SQL in Docker
+
+on:
+  workflow_dispatch:  # manual trigger in GitHub Actions UI
+
+jobs:
+  run-sql:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Login to Oracle Container Registry
+        uses: docker/login-action@v2
+        with:
+         registry: container-registry.oracle.com
+         username: ${{ secrets.ORACLE_USER }}
+         password: ${{ secrets.ORACLE_PASS }}  
+        
+
+      - name: Build Docker image
+        run: docker build -f Dockerfile.worker --progress=plain -t oracle-sql-runner .
+
+      - name: Run container and execute SQL
+        run: |
+          docker run --name oracle-runner --network host oracle-sql-runner
+
+      - name: Copy output.txt from container
+        run: |
+          docker cp oracle-runner:/app/output.txt ${{ github.workspace }}/output.txt
+
+      - name: Commit output to repo
+        run: |
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add output.txt
+            git commit -m "Automated SQL output update"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/krithiksundar/SQLConnection.git HEAD:main
