@@ -12,11 +12,26 @@ CSV_URL = f"https://raw.githubusercontent.com/krithiksundar/Project_DB_ETL/main/
 
 st.info("Fetching latest CSV directly from GitHub...")
 
-try:
-    # Try loading CSV (auto-detect delimiter)
-    df = pd.read_csv(CSV_URL, sep=None, engine="python")
+def load_csv_safely(url):
+    """Try comma first, then tab, then fail with explanation."""
+    try:
+        return pd.read_csv(url)  # comma-separated
+    except:
+        try:
+            return pd.read_csv(url, sep="\t")  # tab-separated
+        except Exception as e:
+            return f"ERROR::{e}"
 
-    # Convert numeric columns safely
+try:
+    df = load_csv_safely(CSV_URL)
+
+    if isinstance(df, str) and df.startswith("ERROR::"):
+        raise Exception(df.replace("ERROR::", ""))
+
+    # FIX: Strip whitespace from column names
+    df.columns = df.columns.str.strip()
+
+    # Convert numeric columns
     numeric_cols = ["USED_MB", "FREE_MB", "TOTAL_MB"]
     for col in numeric_cols:
         if col in df.columns:
@@ -25,14 +40,11 @@ try:
     st.subheader("📄 Raw Data (Live from GitHub)")
     st.dataframe(df, use_container_width=True)
 
-    # Validate required columns
     required_cols = {"TABLESPACE_NAME", "USED_MB"}
     if not required_cols.issubset(df.columns):
         st.error(f"CSV must contain: {', '.join(required_cols)}")
-
     else:
         st.subheader("🥧 Tablespace Used Space Pie Chart")
-
         fig = px.pie(
             df,
             names="TABLESPACE_NAME",
